@@ -1,5 +1,7 @@
 package com.tellapart;
 
+import com.tellapart.TicTacToeBoard.Cell;
+
 /**
  * Strategy pattern for moves on the TicTacToe board. 
  * 
@@ -8,5 +10,5 @@ package com.tellapart;
  * This also makes it easy to modify the game for 2 human players, 2 computer players etc. 
  */
 interface MoveMethod {
-	public int move(TicTacToeBoard board);
+	public Cell move(TicTacToeBoard board);
 }

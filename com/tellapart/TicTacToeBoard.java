@@ -12,11 +12,57 @@ package com.tellapart;
  * @author dobromirv
  */
 class TicTacToeBoard {
+  public static final Cell ILLEGAL_CELL = new Cell(-1, -1);
   private static final int HSPACE = 20;
 
-  private final int rows;
-  private final int cols;
+  private final int max_x;
+  private final int max_y;
   private final int[][] board;
+
+  /**
+   * Represents a particular cell on a TicTacToe board.
+   * 
+   * Currently hard-coded to 2-dimensions.
+   */
+  static class Cell {
+    private final int x;
+    private final int y;
+
+    Cell(int x, int y) {
+      this.x = x;
+      this.y = y;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + x;
+      result = prime * result + y;
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      Cell other = (Cell) obj;
+      if (x != other.x)
+        return false;
+      if (y != other.y)
+        return false;
+      return true;
+    }
+    
+    @Override
+    public String toString() {
+      return "Cell(" + x + "," + y + ")";
+    }
+  }
 
   enum Value {
     None, O, X;
@@ -46,46 +92,46 @@ class TicTacToeBoard {
     DRAW, WIN, NONE
   }
 
-  TicTacToeBoard(int rows, int cols) {
-    if (rows <= 0) {
+  TicTacToeBoard(int max_x, int max_y) {
+    if (max_y <= 0) {
       throw new IllegalArgumentException("A TicTacToe board must have >0 rows.");
     }
-    if (cols <= 0) {
+    if (max_x <= 0) {
       throw new IllegalArgumentException("A TicTacToe board must have >0 cols.");
     }
-    this.rows = rows;
-    this.cols = cols;
-    board = new int[rows][cols];
+    this.max_y = max_y;
+    this.max_x = max_x;
+    board = new int[max_y][max_x];
   }
 
   /**
    * This constructor should only be used by tests. The input is not validated.
    */
   TicTacToeBoard(int[][] board) {
-    rows = board.length;
-    cols = board[0].length;
+    max_y = board.length;
+    max_x = board[0].length;
     this.board = board;
   }
-  
-  private void validateRowCol(int row, int col) {
-    if (row < 0 || row >= rows) {
-      throw new IllegalArgumentException("Illegal row argument: " + row
-          + ". Row must be between 0 and " + (rows - 1));
+
+  private void validateRowCol(int x, int y) {
+    if (y < 0 || y >= max_y) {
+      throw new IllegalArgumentException("Illegal row argument: " + y
+          + ". Row must be between 0 and " + (max_y - 1));
     }
-    if (col < 0 || col >= cols) {
-      throw new IllegalArgumentException("Illegal col argument: " + col
-          + ". Col must be between 0 and " + (cols - 1));
+    if (x < 0 || x >= max_x) {
+      throw new IllegalArgumentException("Illegal col argument: " + x
+          + ". Col must be between 0 and " + (max_x - 1));
     }
   }
 
-  void setCell(int row, int col, Value value) {
-    validateRowCol(row, col);
-    board[row][col] = value.valueToInt();
+  void setCell(Cell cell, Value value) {
+    validateRowCol(cell.y, cell.x);
+    board[cell.x][cell.y] = value.valueToInt();
   }
 
-  Value getCell(int row, int col) {
-    validateRowCol(row, col);
-    return Value.intToValue(board[row][col]);
+  Value getCell(Cell cell) {
+    validateRowCol(cell.y, cell.x);
+    return Value.intToValue(board[cell.x][cell.y]);
   }
 
   /**
@@ -95,14 +141,14 @@ class TicTacToeBoard {
   WinConfig isWinningConfig() {
     WinConfig w = WinConfig.WIN;
     // rows
-    for (int i = 0; i < rows; i++) {
+    for (int i = 0; i < max_y; i++) {
       if ((board[i][0] != 0) && (board[i][0] == board[i][1])
           && (board[i][0] == board[i][2])) {
         return w;
       }
     }
     // columns
-    for (int i = 0; i < cols; i++) {
+    for (int i = 0; i < max_x; i++) {
       if ((board[0][i] != 0) && (board[0][i] == board[1][i])
           && (board[0][i] == board[2][i])) {
         return w;
@@ -122,8 +168,8 @@ class TicTacToeBoard {
 
     // draw
     w = WinConfig.DRAW;
-    for (int i = 0; i < rows; i++)
-      for (int j = 0; j < cols; j++) {
+    for (int i = 0; i < max_y; i++)
+      for (int j = 0; j < max_x; j++) {
         if (board[i][j] == 0)
           w = WinConfig.NONE;
       }
@@ -135,10 +181,10 @@ class TicTacToeBoard {
    *          the row to print
    * @return a string representing the current state of the board's "row" row
    */
-  private String getRowString(int row) {
+  private String getRowString(int y) {
     String s = "";
-    for (int i = 0; i < cols; i++) {
-      switch (board[row][i]) {
+    for (int x = 0; x < max_x; x++) {
+      switch (board[x][y]) {
       case 0:
         s += " ";
         break;
@@ -149,17 +195,17 @@ class TicTacToeBoard {
         s += "X";
       }
 
-      if (i != cols - 1) {
+      if (x != max_x - 1) {
         s += " | ";
       }
     }
 
     s += String.format("%" + HSPACE + "s", "");
 
-    for (int i = 0; i < cols; i++) {
-      s += row * 3 + i + 1;
+    for (int i = 0; i < max_x; i++) {
+      s += y * 3 + i + 1;
 
-      if (i == rows - 1) {
+      if (i == max_y - 1) {
         s += "\n";
       } else {
         s += " | ";
@@ -174,34 +220,34 @@ class TicTacToeBoard {
   public String toString() {
     String s = "";
     // iterate through the rows
-    for (int i = 0; i < rows; i++) {
+    for (int i = 0; i < max_y; i++) {
       s += getRowString(i);
     }
     return s;
   }
-  
+
   /**
    * Prints a human-readable string representing the position chosen.
    * 
    * Note that this currently only works on 3x3 boards.
    */
-  public static String getPosDescription(int pos) {
+  public static String getPosDescription(Cell cell) {
     String str = "";
-    if (pos == 5) {
+    if (cell.x == 1 && cell.y == 1) {
       str = "center";
       return str;
     }
 
-    if ((pos - 1) / 3 == 0) {
+    if (cell.y == 0) {
       str += "upper ";
-    } else if ((pos - 1) / 3 == 1) {
+    } else if (cell.y == 1) {
       str += "middle ";
     } else
       str += "lower ";
 
-    if ((pos - 1) % 3 == 0)
+    if (cell.x == 0)
       str += "left";
-    else if ((pos - 1) % 3 == 1)
+    else if (cell.x == 1)
       str += "middle";
     else
       str += "right";

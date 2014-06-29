@@ -1,5 +1,7 @@
 package com.tellapart;
 
+import com.tellapart.TicTacToeBoard.Cell;
+
 /**
  * Finds the next empty space on a board. A pretty dumb AI that lets a computer play.
  * 
@@ -7,15 +9,23 @@ package com.tellapart;
  */
 class SimpleMoveStrategy implements MoveMethod {
   
-  public int move(TicTacToeBoard board) {
-    for (int i = 0; i < TicTacToe.N; i++) {
-      for (int j = 0; j < TicTacToe.N; j++) {
-        TicTacToeBoard.Value value = board.getCell(i, j);
-        if (value == TicTacToeBoard.Value.None) {
-          return (i * 3 + j + 1);
+  private final int max_x;
+  private final int max_y;
+
+  SimpleMoveStrategy(int max_x, int max_y) {
+    this.max_x = max_x;
+    this.max_y = max_y;
+  }
+  
+  public Cell move(TicTacToeBoard board) {
+    for (int y = 0; y < max_y; y++) {
+      for (int x = 0; x < max_x; x++) {
+        Cell cell = new Cell(x, y);
+        if (board.getCell(cell) == TicTacToeBoard.Value.None) {
+          return cell;
         }
       }
     }
-    return 0;
+    return TicTacToeBoard.ILLEGAL_CELL;
   }
 }

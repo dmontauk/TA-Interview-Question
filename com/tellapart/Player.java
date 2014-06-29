@@ -1,5 +1,7 @@
 package com.tellapart;
 
+import com.tellapart.TicTacToeBoard.Cell;
+
 class Player {
 	private String name;
 	private TicTacToeBoard.Value player_type;
@@ -21,7 +23,7 @@ class Player {
 		return player_type;
 	}
 
-	public int getMove(TicTacToeBoard board) {
+	public Cell getMove(TicTacToeBoard board) {
 		return move_strategy.move(board);
 	}
 }

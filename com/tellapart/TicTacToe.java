@@ -4,107 +4,101 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.tellapart.TicTacToeBoard.Cell;
 import com.tellapart.TicTacToeBoard.WinConfig;
 
 class TicTacToe {
-	protected static final int N = 3;
+  protected static final int N = 3;
   private static BufferedReader reader = new BufferedReader(
       new InputStreamReader(System.in));
 
   private TicTacToeBoard board;
-	private Player player1, player2;
+  private Player player1, player2;
 
-	public Player getplayer1() {
-		return player1;
-	}
+  protected static String getUserInput() {
+    String input = "";
+    try {
+      input = reader.readLine();
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+    return input;
+  }
 
-	public Player getplayer2() {
-		return player2;
-	}
+  TicTacToe(TicTacToeBoard board, Player player1, Player player2) {
+    this.board = board;
+    this.player1 = player1;
+    this.player2 = player2;
+  }
 
-	protected static String getUserInput() {
-		String input = "";
-		try {
-			input = reader.readLine();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		return input;
-	}
+  boolean setMove(Cell cell, TicTacToeBoard.Value p_type) {
+    if (board.getCell(cell) == TicTacToeBoard.Value.None) {
+      board.setCell(cell, p_type);
+      return true;
+    } else {
+      System.out.println("Invalid move");
+      return false;
+    }
+  }
 
-	public TicTacToe(TicTacToeBoard board) {
-	  this.board = board;
-	  
-		System.out.println("Enter player name");
-		player1 = new Player(getUserInput(), TicTacToeBoard.Value.X, 0, new HumanMove());
+  void runGame() {
+    Cell move1;
+    Cell move2;
 
-		player2 = new Player("", TicTacToeBoard.Value.O, 1, new SimpleMoveStrategy());
-		System.out.println("\nHuman player " + player1.getName()
-				+ " vs Computer Player " + player2.getName() + ":");
-	}
+    while (board.isWinningConfig() == WinConfig.NONE) {
+      do {
+        move1 = player1.getMove(board);
+      } while (!setMove(move1, player1.getPlayerType()));
 
-	public boolean setMove(int move, TicTacToeBoard.Value p_type) {
-		int x_coord = (move - 1) / 3;
-		int y_coord = (move - 1) % 3;
+      if ((board.isWinningConfig()) == WinConfig.WIN) {
+        System.out.println("");
+        System.out.println(board.toString());
+        System.out.println("You have beaten my poor AI!");
+        break;
+      } else if (board.isWinningConfig() == WinConfig.DRAW) {
+        System.out.println("");
+        System.out.println(board.toString());
+        System.out.println("Well played. It is a draw!");
+        break;
+      }
 
-		if (board.getCell(x_coord, y_coord) == TicTacToeBoard.Value.None) {
-			board.setCell(x_coord, y_coord, p_type);
-			return true;
-		} else {
-			System.out.println("Invalid move");
-			return false;
-		}
-	}
+      move2 = player2.getMove(board);
+      System.out.println("");
+      System.out.println("You have put an X in the "
+          + TicTacToeBoard.getPosDescription(move1)
+          + ". I will put a O in the "
+          + TicTacToeBoard.getPosDescription(move2) + ".");
+      setMove(move2, player2.getPlayerType());
 
-	public static void main(String[] args) {
-		System.out.println("Welcome to Tic-Tac-Toe.");
-		System.out.println("");
+      if (board.isWinningConfig() == WinConfig.WIN) {
+        System.out.println("");
+        System.out.println(board.toString());
+        System.out.println("I won. Thanks for playing.");
+        break;
+      }
+      System.out.println(board.toString());
+    }
+  }
 
-		TicTacToeBoard board = new TicTacToeBoard(N,  N);
-		TicTacToe game = new TicTacToe(board);
-		String move_str;
-		int move1 = 0;
-		int move2 = 0;
-		int player_type = 0;
-		WinConfig w = WinConfig.NONE;
+  public static void main(String[] args) {
+    System.out.println("Welcome to Tic-Tac-Toe.");
+    System.out.println("");
 
-		System.out
-				.println("Please make your move selection by entering a number 1-9 corresponding to the movement key on the right.\n");
-		System.out.println(board.toString());
+    System.out.println("Enter player name");
+    Player player1 = new Player(getUserInput(), TicTacToeBoard.Value.X, 0,
+        new HumanMove(N, N));
 
-		while (board.isWinningConfig() == WinConfig.NONE) {
-			do {
-				move1 = game.getplayer1().getMove(board);
-			} while (!game.setMove(move1, game.getplayer1().getPlayerType()));
+    Player player2 = new Player("", TicTacToeBoard.Value.O, 1,
+        new SimpleMoveStrategy(N, N));
+    System.out.println("\nHuman player " + player1.getName()
+        + " vs Computer Player " + player2.getName() + ":");
 
-			if ((w = board.isWinningConfig()) == WinConfig.WIN) {
-				System.out.println("");
-				System.out.println(board.toString());
-				System.out.println("You have beaten my poor AI!");
-				break;
-			} else if (w == WinConfig.DRAW) {
-				System.out.println("");
-				System.out.println(board.toString());
-				System.out.println("Well played. It is a draw!");
-				break;
-			}
+    TicTacToeBoard board = new TicTacToeBoard(N, N);
+    TicTacToe game = new TicTacToe(board, player1, player2);
 
-			move2 = game.getplayer2().getMove(board);
-			System.out.println("");
-			System.out.println("You have put an X in the "
-					+ TicTacToeBoard.getPosDescription(move1)
-					+ ". I will put a O in the "
-					+ TicTacToeBoard.getPosDescription(move2) + ".");
-			game.setMove(move2, game.getplayer2().getPlayerType());
-
-			if (board.isWinningConfig() == WinConfig.WIN) {
-				System.out.println("");
-				System.out.println(board.toString());
-				System.out.println("I won. Thanks for playing.");
-				break;
-			}
-			System.out.println(board.toString());
-		}
-
-	}
+    System.out
+        .println("Please make your move selection by entering a number 1-9 corresponding to the movement key on the right.\n");
+    System.out.println(board.toString());
+    game.runGame();
+  }
 }

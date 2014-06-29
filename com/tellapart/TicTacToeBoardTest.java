@@ -1,10 +1,11 @@
 package com.tellapart;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.tellapart.TicTacToeBoard.Cell;
 import com.tellapart.TicTacToeBoard.Value;
 import com.tellapart.TicTacToeBoard.WinConfig;
 
@@ -21,60 +22,60 @@ public class TicTacToeBoardTest {
     TicTacToeBoard board = new TicTacToeBoard(3, 3);
     for (int x = 0; x < 3; x++) {
       for (int y = 0; y < 3; y++) {
-        assertEquals(Value.None, board.getCell(x, y));
+        assertEquals(Value.None, board.getCell(new Cell(x, y)));
       }
     }
   }
   
   @Test(expected=IllegalArgumentException.class)
-  public void testZeroRowSize() {
+  public void testZeroXSize() {
     new TicTacToeBoard(0, 3);
   }
   
   @Test(expected=IllegalArgumentException.class)
-  public void testNegativeRowSize() {
+  public void testNegativeXSize() {
     new TicTacToeBoard(-1, 3);
   }
   
   @Test(expected=IllegalArgumentException.class)
-  public void testZeroColSize() {
+  public void testZeroYSize() {
     new TicTacToeBoard(3, 0);
   }
   
   @Test(expected=IllegalArgumentException.class)
-  public void testNegativeColSize() {
+  public void testNegativeYSize() {
     new TicTacToeBoard(3, -1);
   }
   
   @Test(expected=IllegalArgumentException.class)
-  public void testSetCellRowTooLarge() {
-    default_board.setCell(3, 1, Value.O);
+  public void testSetCellXTooLarge() {
+    default_board.setCell(new Cell(3, 1), Value.O);
   }
   
   @Test(expected=IllegalArgumentException.class)
-  public void testSetCellRowTooSmall() {
-    default_board.setCell(-1, 1, Value.O);
+  public void testSetCellXTooSmall() {
+    default_board.setCell(new Cell(-1, 1), Value.O);
   }
   
   @Test(expected=IllegalArgumentException.class)
-  public void testSetCellColTooLarge() {
-    default_board.setCell(1, 3, Value.O);
+  public void testSetCellYTooLarge() {
+    default_board.setCell(new Cell(1, 3), Value.O);
   }
   
   @Test(expected=IllegalArgumentException.class)
-  public void testSetCellColTooSmall() {
-    default_board.setCell(1, -1, Value.O);
+  public void testSetCellYTooSmall() {
+    default_board.setCell(new Cell(1, -1), Value.O);
   }
   
   // TODO(dobromirv): we should have the same tests for getCell but will skip for brevity.
   
   @Test
   public void testGetCell() {
-    assertEquals(Value.None, default_board.getCell(1, 1));
-    default_board.setCell(1, 1, Value.O);
-    assertEquals(Value.O, default_board.getCell(1, 1));
-    default_board.setCell(1, 1, Value.X);
-    assertEquals(Value.X, default_board.getCell(1, 1));
+    assertEquals(Value.None, default_board.getCell(new Cell(1, 1)));
+    default_board.setCell(new Cell(1, 1), Value.O);
+    assertEquals(Value.O, default_board.getCell(new Cell(1, 1)));
+    default_board.setCell(new Cell(1, 1), Value.X);
+    assertEquals(Value.X, default_board.getCell(new Cell(1, 1)));
   }
   
   @Test
