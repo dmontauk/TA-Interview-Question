@@ -1,21 +1,26 @@
 package com.tellapart;
 
-/** Represents a TicTacToe board.
+/**
+ * Represents a TicTacToe board.
+ * 
+ * This is a dumb data structure that can update the board, read a cell, print a
+ * picture of the board, and check the win status. It doesn't understand
+ * players, turns, etc. Such logic should be implemented by a game engine.
+ * 
+ * Not thread-safe (yet).
  * 
  * @author dobromirv
  */
 class TicTacToeBoard {
   private static final int HSPACE = 20;
-  
+
   private final int rows;
   private final int cols;
   private final int[][] board;
-  
+
   enum Value {
-    None,
-    O,
-    X;
-    
+    None, O, X;
+
     int valueToInt() {
       if (this == None) {
         return 0;
@@ -25,6 +30,7 @@ class TicTacToeBoard {
       }
       return 2;
     }
+
     static Value intToValue(int x) {
       if (x == 0) {
         return None;
@@ -35,47 +41,57 @@ class TicTacToeBoard {
       return X;
     }
   }
-  
+
   enum WinConfig {
-  	DRAW, WIN, NONE
+    DRAW, WIN, NONE
   }
 
   TicTacToeBoard(int rows, int cols) {
+    if (rows <= 0) {
+      throw new IllegalArgumentException("A TicTacToe board must have >0 rows.");
+    }
+    if (cols <= 0) {
+      throw new IllegalArgumentException("A TicTacToe board must have >0 cols.");
+    }
     this.rows = rows;
     this.cols = cols;
     board = new int[rows][cols];
-    // Pretty sure this isn't necessary since Java inits to 0 by default.
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        board[i][j] = 0;
-      }
-    }
   }
-  
+
+  /**
+   * This constructor should only be used by tests. The input is not validated.
+   */
   TicTacToeBoard(int[][] board) {
     rows = board.length;
-    if (rows == 0) {
-      // TODO(dobromirv): throw an exception
-    }
     cols = board[0].length;
     this.board = board;
   }
   
-  void setCell(int row, int col, Value player) {
-    if (row >= rows) {
-      // Throw an exception.
+  private void validateRowCol(int row, int col) {
+    if (row < 0 || row >= rows) {
+      throw new IllegalArgumentException("Illegal row argument: " + row
+          + ". Row must be between 0 and " + (rows - 1));
     }
-    if (col >= cols) {
-      // Throw an exception
+    if (col < 0 || col >= cols) {
+      throw new IllegalArgumentException("Illegal col argument: " + col
+          + ". Col must be between 0 and " + (cols - 1));
     }
-    board[row][col] = player.valueToInt();
   }
-  
-  Value getCell(int row, int col) { 
-    // TODO(dobromirv): validate input
+
+  void setCell(int row, int col, Value value) {
+    validateRowCol(row, col);
+    board[row][col] = value.valueToInt();
+  }
+
+  Value getCell(int row, int col) {
+    validateRowCol(row, col);
     return Value.intToValue(board[row][col]);
   }
-  
+
+  /**
+   * @return the winning status of the board. Note that this method is currently
+   *         hard-coded for 3x3 boards; this should be fixed.
+   */
   WinConfig isWinningConfig() {
     WinConfig w = WinConfig.WIN;
     // rows
@@ -113,7 +129,12 @@ class TicTacToeBoard {
       }
     return w;
   }
-  
+
+  /**
+   * @param row
+   *          the row to print
+   * @return a string representing the current state of the board's "row" row
+   */
   private String getRowString(int row) {
     String s = "";
     for (int i = 0; i < cols; i++) {
@@ -147,6 +168,9 @@ class TicTacToeBoard {
     return s;
   }
 
+  /**
+   * @return a string representing the current state of the board
+   */
   public String toString() {
     String s = "";
     // iterate through the rows
@@ -156,4 +180,3 @@ class TicTacToeBoard {
     return s;
   }
 }
-
