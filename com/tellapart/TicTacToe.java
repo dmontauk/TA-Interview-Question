@@ -4,93 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import com.tellapart.TicTacToe.Player;
 import com.tellapart.TicTacToeBoard.WinConfig;
-
-// Strategy pattern. 
-// The computer player's behavior/strategy can be replaced by inheriting from the interface below 
-// Also, the human player's behavior inherits from the same interface 
-// This also makes it easy to modify the game for 2 human players, 2 computer players etc. 
-
-interface MoveMethod {
-	public int move(TicTacToeBoard board);
-}
-
-class SimpleMoveStrategy implements MoveMethod {
-	public int move(TicTacToeBoard board) {
-
-		for (int i = 0; i < TicTacToe.N; i++) {
-			for (int j = 0; j < TicTacToe.N; j++) {
-			  TicTacToeBoard.Value value = board.getCell(i, j);
-				if (value == TicTacToeBoard.Value.None) {
-					return (i * 3 + j + 1);
-				}
-			}
-		}
-		return 0;
-	}
-}
-
-class HumanMove implements MoveMethod {
-	public int move(TicTacToeBoard board) {
-
-		String move_str;
-		int move_int = 0;
-		boolean valid_input = false;
-		while (!valid_input) {
-			System.out.print("Where to ? ");
-			move_str = TicTacToe.getUserInput();
-			if (Character.isDigit(move_str.toCharArray()[0])) {
-				move_int = Integer.parseInt(move_str);
-				if ((move_int <= (TicTacToe.N) * (TicTacToe.N))
-						&& move_int >= 1) {
-					valid_input = true;
-					break;
-				}
-			}
-
-			if (!valid_input) {
-				System.out.println("Invalid input");
-				continue;
-			}
-		}
-		return move_int;
-	}
-
-}
 
 class TicTacToe {
 	protected static final int N = 3;
-	private TicTacToeBoard board;
-	private static BufferedReader reader = new BufferedReader(
-			new InputStreamReader(System.in));
+  private static BufferedReader reader = new BufferedReader(
+      new InputStreamReader(System.in));
 
-	class Player {
-		private String name;
-		private TicTacToeBoard.Value player_type;
-		private int player_order;
-		private MoveMethod move_strategy;
-
-		public Player(String pname, TicTacToeBoard.Value type, int order, MoveMethod move_s) {
-			name = pname;
-			player_type = type;
-			player_order = order;
-			move_strategy = move_s;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public TicTacToeBoard.Value getPlayerType() {
-			return player_type;
-		}
-
-		public int getMove() {
-			return move_strategy.move(board);
-		}
-	}
-
+  private TicTacToeBoard board;
 	private Player player1, player2;
 
 	public Player getplayer1() {
@@ -177,7 +98,7 @@ class TicTacToe {
 
 		while (board.isWinningConfig() == WinConfig.NONE) {
 			do {
-				move1 = game.getplayer1().getMove();
+				move1 = game.getplayer1().getMove(board);
 			} while (!game.setMove(move1, game.getplayer1().getPlayerType()));
 
 			if ((w = board.isWinningConfig()) == WinConfig.WIN) {
@@ -192,7 +113,7 @@ class TicTacToe {
 				break;
 			}
 
-			move2 = game.getplayer2().getMove();
+			move2 = game.getplayer2().getMove(board);
 			System.out.println("");
 			System.out.println("You have put an X in the "
 					+ TicTacToe.getPosDescription(move1)
