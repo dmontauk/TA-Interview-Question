@@ -41,7 +41,7 @@ class TicTacToe {
     }
   }
 
-  void runGame() {
+  Player runGame() {
     Cell move1;
     Cell move2;
 
@@ -54,19 +54,19 @@ class TicTacToe {
         System.out.println("");
         System.out.println(board.toString());
         System.out.println("You have beaten my poor AI!");
-        break;
+        return player1;
       } else if (board.isWinningConfig() == WinConfig.DRAW) {
         System.out.println("");
         System.out.println(board.toString());
         System.out.println("Well played. It is a draw!");
-        break;
+        return null;
       }
 
       move2 = player2.getMove(board);
       System.out.println("");
-      System.out.println("You have put an X in the "
+      System.out.println("You have put an " + player1.getPlayerType().toString() + " in the "
           + TicTacToeBoard.getPosDescription(move1)
-          + ". I will put a O in the "
+          + ". I will put a " + player2.getPlayerType().toString() + " in the "
           + TicTacToeBoard.getPosDescription(move2) + ".");
       setMove(move2, player2.getPlayerType());
 
@@ -74,10 +74,10 @@ class TicTacToe {
         System.out.println("");
         System.out.println(board.toString());
         System.out.println("I won. Thanks for playing.");
-        break;
+        return player2;
       }
-      System.out.println(board.toString());
     }
+    return null;
   }
 
   public static void main(String[] args) {
@@ -100,5 +100,6 @@ class TicTacToe {
         .println("Please make your move selection by entering a number 1-9 corresponding to the movement key on the right.\n");
     System.out.println(board.toString());
     game.runGame();
+    System.out.println(board.toString());
   }
 }
