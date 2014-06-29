@@ -22,30 +22,6 @@ class TicTacToe {
 		return player2;
 	}
 
-	public static String getPosDescription(int pos) {
-		String str = "";
-		if (pos == 5) {
-			str = "center";
-			return str;
-		}
-
-		if ((pos - 1) / 3 == 0) {
-			str += "upper ";
-		} else if ((pos - 1) / 3 == 1) {
-			str += "middle ";
-		} else
-			str += "lower ";
-
-		if ((pos - 1) % 3 == 0)
-			str += "left";
-		else if ((pos - 1) % 3 == 1)
-			str += "middle";
-		else
-			str += "right";
-
-		return str;
-	}
-
 	protected static String getUserInput() {
 		String input = "";
 		try {
@@ -116,9 +92,9 @@ class TicTacToe {
 			move2 = game.getplayer2().getMove(board);
 			System.out.println("");
 			System.out.println("You have put an X in the "
-					+ TicTacToe.getPosDescription(move1)
+					+ TicTacToeBoard.getPosDescription(move1)
 					+ ". I will put a O in the "
-					+ TicTacToe.getPosDescription(move2) + ".");
+					+ TicTacToeBoard.getPosDescription(move2) + ".");
 			game.setMove(move2, game.getplayer2().getPlayerType());
 
 			if (board.isWinningConfig() == WinConfig.WIN) {

@@ -179,4 +179,33 @@ class TicTacToeBoard {
     }
     return s;
   }
+  
+  /**
+   * Prints a human-readable string representing the position chosen.
+   * 
+   * Note that this currently only works on 3x3 boards.
+   */
+  public static String getPosDescription(int pos) {
+    String str = "";
+    if (pos == 5) {
+      str = "center";
+      return str;
+    }
+
+    if ((pos - 1) / 3 == 0) {
+      str += "upper ";
+    } else if ((pos - 1) / 3 == 1) {
+      str += "middle ";
+    } else
+      str += "lower ";
+
+    if ((pos - 1) % 3 == 0)
+      str += "left";
+    else if ((pos - 1) % 3 == 1)
+      str += "middle";
+    else
+      str += "right";
+
+    return str;
+  }
 }
